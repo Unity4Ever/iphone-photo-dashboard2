@@ -1,29 +1,8 @@
 name: Process Photo Upload
 
 on:
-  workflow_dispatch:
-    inputs:
-      image:
-        description: 'Base64 image'
-        required: true
-      timestamp:
-        description: 'Timestamp'
-        required: false
-      battery:
-        description: 'Battery level'
-        required: false
-      device:
-        description: 'Device'
-        required: false
-      location_name:
-        description: 'Location Name'
-        required: false
-      latitude:
-        description: 'Latitude'
-        required: false
-      longitude:
-        description: 'Longitude'
-        required: false
+  repository_dispatch:
+    types: [upload_photo]
 
 permissions:
   contents: write
@@ -38,16 +17,16 @@ jobs:
       - name: Opslaan van foto en metadata
         run: |
           mkdir -p data
-          echo "${{ inputs.image }}" | base64 -d > data/latest.jpg
+          echo "${{ github.event.client_payload.image }}" | base64 -d > data/latest.jpg
           cat << 'EOF' > data/metadata.json
           {
             "hasImage": true,
-            "timestamp": "${{ inputs.timestamp }}",
-            "battery": "${{ inputs.battery }}",
-            "device": "${{ inputs.device }}",
-            "location_name": "${{ inputs.location_name }}",
-            "latitude": "${{ inputs.latitude }}",
-            "longitude": "${{ inputs.longitude }}"
+            "timestamp": "${{ github.event.client_payload.timestamp }}",
+            "battery": "${{ github.event.client_payload.battery }}",
+            "device": "${{ github.event.client_payload.device }}",
+            "location_name": "${{ github.event.client_payload.location_name }}",
+            "latitude": "${{ github.event.client_payload.latitude }}",
+            "longitude": "${{ github.event.client_payload.longitude }}"
           }
           EOF
 
