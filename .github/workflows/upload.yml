@@ -4,50 +4,57 @@ on:
   workflow_dispatch:
     inputs:
       image:
-        description: 'Base64 image'
+        description: "Base64 image"
         required: true
       timestamp:
-        description: 'Timestamp'
+        description: "Timestamp"
         required: false
       battery:
-        description: 'Battery level'
+        description: "Battery level"
         required: false
       device:
-        description: 'Device'
+        description: "Device"
         required: false
       location_name:
-        description: 'Location Name'
+        description: "Location Name"
         required: false
       latitude:
-        description: 'Latitude'
+        description: "Latitude"
         required: false
       longitude:
-        description: 'Longitude'
+        description: "Longitude"
         required: false
+
   repository_dispatch:
     types: [upload_photo]
 
 permissions:
   contents: write
+
+jobs:
+  save_photo:
+    runs-on: ubuntu-latest
+    steps:
       - name: Opslaan van foto en metadata
         run: |
           mkdir -p data
-          echo "${{ inputs.image }}" | base64 -d > data/latest.jpg
-          echo "${{ github.event.client_payload.image }}" | base64 -d > data/latest.jpg
+
+          # Foto opslaan (workflow_dispatch of repository_dispatch)
+          if [ -n "${{ inputs.image }}" ]; then
+            echo "${{ inputs.image }}" | base64 -d > data/latest.jpg
+          elif [ -n "${{ github.event.client_payload.image }}" ]; then
+            echo "${{ github.event.client_payload.image }}" | base64 -d > data/latest.jpg
+          fi
+
+          # Metadata opslaan
           cat << 'EOF' > data/metadata.json
           {
             "hasImage": true,
-            "timestamp": "${{ inputs.timestamp }}",
-            "battery": "${{ inputs.battery }}",
-            "device": "${{ inputs.device }}",
-            "location_name": "${{ inputs.location_name }}",
-            "latitude": "${{ inputs.latitude }}",
-            "longitude": "${{ inputs.longitude }}"
-            "timestamp": "${{ github.event.client_payload.timestamp }}",
-            "battery": "${{ github.event.client_payload.battery }}",
-            "device": "${{ github.event.client_payload.device }}",
-            "location_name": "${{ github.event.client_payload.location_name }}",
-            "latitude": "${{ github.event.client_payload.latitude }}",
-            "longitude": "${{ github.event.client_payload.longitude }}"
+            "timestamp": "${{ inputs.timestamp || github.event.client_payload.timestamp }}",
+            "battery": "${{ inputs.battery || github.event.client_payload.battery }}",
+            "device": "${{ inputs.device || github.event.client_payload.device }}",
+            "location_name": "${{ inputs.location_name || github.event.client_payload.location_name }}",
+            "latitude": "${{ inputs.latitude || github.event.client_payload.latitude }}",
+            "longitude": "${{ inputs.longitude || github.event.client_payload.longitude }}"
           }
           EOF
