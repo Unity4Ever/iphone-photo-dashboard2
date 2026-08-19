@@ -29,7 +29,6 @@ on:
 
 permissions:
   contents: write
-@@ -38,16 +17,16 @@ jobs:
       - name: Opslaan van foto en metadata
         run: |
           mkdir -p data
