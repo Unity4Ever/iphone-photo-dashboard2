@@ -1,9 +1,11 @@
 {
-  "hasImage": false,
-  "timestamp": "",
-  "battery": "",
-  "device": "",
-  "location_name": "",
-  "latitude": null,
-  "longitude": null
+  "hasImage": true,
+  "timestamp": "01-01-1, 21:32",
+  "battery": "53",
+  "device": "iPhone",
+  "location_name": "Alver 49
+3356 EL Papendrecht
+Nederland",
+  "latitude": "51.83405263290963",
+  "longitude": "4.722186775198785"
 }
